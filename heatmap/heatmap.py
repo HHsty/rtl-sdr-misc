@@ -220,10 +220,17 @@ def open_raw_data(path):
 def slice_columns(columns, low_freq, high_freq):
     start_col = 0
     stop_col  = len(columns)
-    if low_freq  is not None and low <= low_freq  <= high:
-        start_col = sum(f<low_freq   for f in columns)
-    if high_freq is not None and low <= high_freq <= high:
-        stop_col  = sum(f<=high_freq for f in columns)
+
+    if args.low_freq  is not None:
+        arg_low_freq = args.low_freq
+        
+    if args.high_freq  is not None:
+        arg_high_freq = args.high_freq
+
+    if arg_low_freq  is not None and low_freq <= arg_low_freq  <= high_freq:
+        start_col = sum(f<arg_low_freq   for f in columns)
+    if arg_high_freq is not None and low_freq <= arg_high_freq <= high_freq:
+        stop_col  = sum(f<=arg_high_freq for f in columns)
     return start_col, stop_col-1
 
 def summarize_pass(args):
@@ -258,7 +265,7 @@ def summarize_pass(args):
             break
         times.add(t)
         columns = list(frange(low, high, step))
-        start_col, stop_col = slice_columns(columns, args.low_freq, args.high_freq)
+        start_col, stop_col = slice_columns(columns, low, high)
         f_key = (columns[start_col], columns[stop_col], step)
         zs = line[6+start_col:6+stop_col+1]
         if not zs:
@@ -380,7 +387,7 @@ def collate_row(x_size):
         high = int(line[3]) + args.offset_freq
         step = float(line[4])
         columns = list(frange(low, high, step))
-        start_col, stop_col = slice_columns(columns, args.low_freq, args.high_freq)
+        start_col, stop_col = slice_columns(columns, low, high)
         if args.low_freq and columns[stop_col] < args.low_freq:
             continue
         if args.high_freq and columns[start_col] > args.high_freq:
