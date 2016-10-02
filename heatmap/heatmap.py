@@ -220,6 +220,8 @@ def open_raw_data(path):
 def slice_columns(columns, low_freq, high_freq):
     start_col = 0
     stop_col  = len(columns)
+    arg_low_freq = None
+    arg_high_freq = None
 
     if args.low_freq  is not None:
         arg_low_freq = args.low_freq
@@ -227,7 +229,7 @@ def slice_columns(columns, low_freq, high_freq):
     if args.high_freq  is not None:
         arg_high_freq = args.high_freq
 
-    if arg_low_freq  is not None and low_freq <= arg_low_freq  <= high_freq:
+    if arg_low_freq is not None and low_freq <= arg_low_freq  <= high_freq:
         start_col = sum(f<arg_low_freq   for f in columns)
     if arg_high_freq is not None and low_freq <= arg_high_freq <= high_freq:
         stop_col  = sum(f<=arg_high_freq for f in columns)
